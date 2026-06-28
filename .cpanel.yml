@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/sheateat/public_html/
+    - /bin/cp -f index.html $DEPLOYPATH
+    - /bin/cp -f robots.txt $DEPLOYPATH
+    - /bin/cp -f site.webmanifest $DEPLOYPATH
+    - /bin/rm -rf ${DEPLOYPATH}assets
+    - /bin/cp -R assets $DEPLOYPATH
