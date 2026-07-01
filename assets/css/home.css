@@ -1,1 +1,1 @@
-/* Homepage uses the shared site.css design. */
+.hero+.section .product-card img{aspect-ratio:16/10;object-fit:cover;object-position:center;background:#fff}.hero+.section .card-body{padding-top:18px}@media(max-width:560px){.hero+.section .product-card img{aspect-ratio:4/3}}
