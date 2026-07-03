@@ -1,0 +1,61 @@
+name: Add Google tag to all pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-google-tag.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-google-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Add Google tag after head
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          tag = '''<!-- Google tag (gtag.js) -->
+          <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCMGN279Z8"></script>
+          <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-TCMGN279Z8');
+          </script>'''
+
+          updated = []
+          for path in Path('.').rglob('*.html'):
+              text = path.read_text(encoding='utf-8')
+              if 'G-TCMGN279Z8' in text:
+                  continue
+              marker = '<head>'
+              if marker not in text:
+                  continue
+              text = text.replace(marker, marker + tag, 1)
+              path.write_text(text, encoding='utf-8')
+              updated.append(str(path))
+
+          print('Updated files:')
+          print('\n'.join(updated) if updated else 'None')
+          PY
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add '*.html'
+          git commit -m "Add Google tag to all website pages"
+          git push
