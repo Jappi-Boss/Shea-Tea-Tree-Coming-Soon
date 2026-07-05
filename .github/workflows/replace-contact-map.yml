@@ -1,0 +1,46 @@
+name: Replace contact map with worldwide image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/replace-contact-map.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  replace-map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Replace embedded map
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('contact.html')
+          text = path.read_text(encoding='utf-8')
+
+          old = '<section class="section alt"><div class="container"><div class="section-head"><div><div class="eyebrow">Our location</div><h2>Find us in Addis Ababa</h2></div></div><div class="soft-panel" style="padding:0;overflow:hidden"><iframe title="Shea Tea Tree location in Addis Ababa" src="https://www.google.com/maps?q=Addis%20Ababa%2C%20Ethiopia&output=embed" width="100%" height="420" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div></div></section>'
+          new = '<section class="section alt"><div class="container"><div class="section-head"><div><div class="eyebrow">Our locations</div><h2>Shea Tea Tree locations worldwide</h2></div></div><div class="soft-panel" style="padding:0;overflow:hidden"><img src="assets/images/shea-tea-tree-worldwide-locations.webp" alt="Shea Tea Tree locations in the USA, UK, UAE and Ethiopia" width="2048" height="717" loading="lazy" style="width:100%;height:auto;display:block"></div></div></section>'
+
+          if old not in text:
+              raise SystemExit('Original map section not found')
+
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Commit contact page update
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add contact.html
+          git commit -m "Replace contact map with worldwide locations image"
+          git push
