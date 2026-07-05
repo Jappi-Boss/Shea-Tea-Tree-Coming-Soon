@@ -1,0 +1,39 @@
+name: Fix contact map image extension
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-contact-map-extension.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-map-extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update contact image path
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('contact.html')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('assets/images/shea-tea-tree-worldwide-locations.webp','assets/images/shea-tea-tree-worldwide-locations.jpg')
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit change
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add contact.html
+          git commit -m "Fix contact map image extension"
+          git push
