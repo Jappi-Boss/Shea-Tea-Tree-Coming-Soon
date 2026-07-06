@@ -2,7 +2,8 @@ name: Import product images
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - '.github/workflows/import-product-images.yml'
   workflow_dispatch:
@@ -16,13 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Decode product images
+        shell: bash
         run: |
+          set -e
           mkdir -p assets/images/products
-          base64 -d assets/images/products/product-images.tgz.b64 > /tmp/product-images.tgz
+          base64 --decode assets/images/products/product-images.tgz.b64 > /tmp/product-images.tgz
           tar -xzf /tmp/product-images.tgz -C assets/images/products
           rm -f assets/images/products/product-images.tgz.b64
           rm -f assets/images/products/coconut-shampoo-1.webp.b64
       - name: Commit product images
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -32,4 +36,4 @@ jobs:
             exit 0
           fi
           git commit -m "Import product photography"
-          git push
+          git push origin main
