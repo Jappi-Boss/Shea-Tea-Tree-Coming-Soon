@@ -3,10 +3,9 @@ name: Import product images
 on:
   push:
     branches:
-      - main
+      - feature/product-catalog-content
     paths:
       - '.github/workflows/import-product-images.yml'
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,21 +18,24 @@ jobs:
       - name: Decode product images
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           mkdir -p assets/images/products
           base64 --decode assets/images/products/product-images.tgz.b64 > /tmp/product-images.tgz
           tar -xzf /tmp/product-images.tgz -C assets/images/products
           rm -f assets/images/products/product-images.tgz.b64
-          rm -f assets/images/products/coconut-shampoo-1.webp.b64
-      - name: Commit product images
+          rm -f assets/images/products/*.b64
+      - name: Commit product images to the feature branch
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/images/products
+          git fetch origin main --depth=1
+          git checkout origin/main -- .github/workflows/import-product-images.yml
+          git add assets/images/products .github/workflows/import-product-images.yml
           if git diff --cached --quiet; then
             echo "No changes needed."
             exit 0
           fi
-          git commit -m "Import product photography"
-          git push origin main
+          git commit -m "Import optimized product photography"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
