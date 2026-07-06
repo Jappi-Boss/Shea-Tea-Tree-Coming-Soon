@@ -1,0 +1,43 @@
+name: Attach products filter
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/attach-products-filter.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Attach dedicated products script
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('products.html')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('assets/css/products.css?v=20260706-1','assets/css/products.css?v=20260706-2')
+          marker = '<script src="assets/js/products-filter.js?v=20260706-1" defer></script>'
+          if marker not in text:
+              text = text.replace('</body>', marker + '</body>')
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit update
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add products.html
+          git commit -m "Attach dedicated product filter script"
+          git push origin main
