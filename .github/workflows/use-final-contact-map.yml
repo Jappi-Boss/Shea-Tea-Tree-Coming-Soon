@@ -1,0 +1,37 @@
+name: Use final contact map image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/use-final-contact-map.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-contact-map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update contact page image
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('contact.html')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('assets/images/shea-tea-tree-worldwide-locations.jpg','assets/images/shea-tea-tree-worldwide-locations-final.webp')
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit update
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add contact.html
+          git commit -m "Use final contact page map image"
+          git push
