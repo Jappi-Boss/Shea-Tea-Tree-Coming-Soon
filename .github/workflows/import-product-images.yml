@@ -37,3 +37,5 @@ jobs:
           fi
           git commit -m "Import product photography"
           git push origin main
+
+# Approved product-image deployment trigger: 2026-07-08
