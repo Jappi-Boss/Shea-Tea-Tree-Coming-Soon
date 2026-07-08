@@ -1,11 +1,6 @@
 name: Import product images
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/import-product-images.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,19 +10,52 @@ jobs:
   import:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
       - name: Decode product images
         shell: bash
         run: |
-          set -e
-          mkdir -p assets/images/products
-          base64 --decode assets/images/products/product-images.tgz.b64 > /tmp/product-images.tgz
-          tar -xzf /tmp/product-images.tgz -C assets/images/products
-          rm -f assets/images/products/product-images.tgz.b64
-          rm -f assets/images/products/coconut-shampoo-1.webp.b64
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, io, tarfile
+
+          source = Path('assets/images/products/product-images.tgz.b64')
+          text = ''.join(source.read_text(encoding='utf-8').split())
+          text += '=' * (-len(text) % 4)
+          archive = base64.b64decode(text, validate=False)
+
+          destination = Path('assets/images/products')
+          destination.mkdir(parents=True, exist_ok=True)
+          with tarfile.open(fileobj=io.BytesIO(archive), mode='r:gz') as tar:
+              tar.extractall(destination)
+
+          source.unlink(missing_ok=True)
+          (destination / 'coconut-shampoo-1.webp.b64').unlink(missing_ok=True)
+          PY
+
+      - name: Verify product images
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            coconut-shampoo-1.webp
+            coconut-shampoo-2.webp
+            jojoba-oil-shampoo.webp
+            moroccan-argan-oil-shampoo.webp
+            tea-tree-extract-conditioner.webp
+            rosemary-extract-conditioner.webp
+            shea-butter-conditioner.webp
+            moroccan-argan-oil-conditioner.webp
+          )
+          for file in "${required[@]}"; do
+            test -s "assets/images/products/$file"
+          done
+
       - name: Commit product images
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/images/products
@@ -37,5 +65,3 @@ jobs:
           fi
           git commit -m "Import product photography"
           git push origin main
-
-# Approved product-image deployment trigger: 2026-07-08
