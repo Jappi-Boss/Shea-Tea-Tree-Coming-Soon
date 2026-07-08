@@ -1,4 +1,1 @@
-(() => {
-  // Product images are stored as real WebP files in assets/images/products.
-  // No fallback or PHP routing is required.
-})();
+(()=>{if(document.querySelector('script[data-stt-new-products]'))return;const script=document.createElement('script');script.src='assets/js/new-products.js?v=20260708-1';script.defer=true;script.dataset.sttNewProducts='true';document.head.appendChild(script);})();
