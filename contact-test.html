@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-ET">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contact Form Test | Shea Tea Tree</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    .test-wrap{max-width:900px;margin:40px auto;padding:0 20px}.test-card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:34px}.test-note{background:#edf5ef;border-left:5px solid var(--green);border-radius:14px;padding:16px 18px;margin:0 0 22px;color:var(--green)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field-full{grid-column:1/-1}.test-card label{display:block;font-weight:800;color:var(--green);font-size:.9rem;margin:0 0 8px}.test-card input,.test-card textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:14px;padding:15px 16px;font:inherit;background:#f8faf7}.test-card textarea{min-height:170px;resize:vertical}.test-card button{width:100%;border:0;border-radius:999px;background:var(--green);color:#fff;font-weight:900;padding:16px 18px;margin-top:18px;cursor:pointer}.success,.error{display:none;border-radius:14px;padding:15px 18px;margin-bottom:18px}.success{background:#edf5ef;color:#174b2a;border:1px solid #b9d4c0}.error{background:#fff2f2;color:#8b1f1f;border:1px solid #e5b7b7}@media(max-width:700px){.form-grid{grid-template-columns:1fr}.test-card{padding:24px}}
+  </style>
+</head>
+<body>
+<header class="site-header"><div class="container nav"><a class="brand" href="index.html"><img src="assets/images/shea-tea-tree-logo.png" alt="Shea Tea Tree logo"></a><button class="menu-btn" aria-label="Open menu">☰</button><nav class="nav-links"><a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="testimonials.html">Testimonials</a><a href="blog.html">Blog</a><a class="nav-cta" href="contact.html">Contact Us</a></nav></div></header>
+<main>
+  <section class="page-hero"><div class="container"><div class="eyebrow">Private test page</div><h1>Contact Form Email Test</h1><p>This page tests the clean PHP email format before changing the live contact page.</p></div></section>
+  <section class="test-wrap">
+    <div class="test-card">
+      <div class="test-note"><strong>Test only:</strong> this form sends a clean formal email to info@sheateatree.com using send-message-test.php.</div>
+      <div id="successMessage" class="success"><strong>Thank you.</strong> Your test message has been sent successfully.</div>
+      <div id="errorMessage" class="error"><strong>Message not sent.</strong> Please check the required fields or server mail settings.</div>
+      <form action="send-message-test.php" method="POST">
+        <div class="form-grid">
+          <div><label for="name">Name</label><input id="name" name="name" type="text" placeholder="Your name" required></div>
+          <div><label for="company">Company</label><input id="company" name="company" type="text" placeholder="Company name"></div>
+          <div><label for="phone">Phone</label><input id="phone" name="phone" type="text" placeholder="Telephone or WhatsApp"></div>
+          <div><label for="email">Email</label><input id="email" name="email" type="email" placeholder="Email address" required></div>
+          <div class="field-full"><label for="subject">Subject</label><input id="subject" name="subject" type="text" placeholder="How can we help?" required></div>
+          <div class="field-full"><label for="message">Message</label><textarea id="message" name="message" placeholder="Write your message" required></textarea></div>
+        </div>
+        <button type="submit">Send Test Message</button>
+      </form>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="container"><div class="footer-grid"><div><img src="assets/images/shea-tea-tree-logo.png" alt="Shea Tea Tree" class="footer-logo"><p>Nature-inspired shampoo and conditioner made with carefully selected botanical extracts.</p></div><div><strong>Explore</strong><a href="products.html">Products</a><a href="about.html">About Us</a><a href="testimonials.html">Testimonials</a><a href="blog.html">Journal</a></div><div><strong>Support</strong><a href="contact.html">Contact</a><a href="index.html#faq">FAQs</a></div><div><strong>Follow</strong><a href="https://www.facebook.com/share/1CHfZVzDWf/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@shea.teatree?_r=1&_t=ZS-97tgioTv1cK" target="_blank" rel="noopener">TikTok</a></div></div><small>© 2026 Shea Tea Tree. All rights reserved.</small></div></footer>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('sent') === 'true') document.getElementById('successMessage').style.display = 'block';
+  if (params.get('error')) document.getElementById('errorMessage').style.display = 'block';
+</script>
+<script src="assets/js/site-full.js" defer></script>
+</body>
+</html>
