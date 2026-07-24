@@ -28,6 +28,7 @@ if (!$name || !$email || !$subject_field || !$message_text) {
 }
 
 $to = 'info@sheateatree.com';
+$from = 'info@sheateatree.com';
 $email_subject = 'New Website Enquiry - Shea Tea Tree';
 
 $safe_name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
@@ -85,10 +86,12 @@ $email_body = "
 $headers = [];
 $headers[] = 'MIME-Version: 1.0';
 $headers[] = 'Content-type: text/html; charset=UTF-8';
-$headers[] = 'From: Shea Tea Tree Website <noreply@sheateatree.com>';
+$headers[] = 'From: Shea Tea Tree Website <' . $from . '>';
 $headers[] = 'Reply-To: ' . $safe_name . ' <' . $email . '>';
+$headers[] = 'Return-Path: ' . $from;
+$headers[] = 'X-Mailer: PHP/' . phpversion();
 
-$sent = mail($to, $email_subject, $email_body, implode("\r\n", $headers));
+$sent = mail($to, $email_subject, $email_body, implode("\r\n", $headers), '-f ' . $from);
 
 if ($sent) {
     header('Location: contact-test.html?sent=true');
